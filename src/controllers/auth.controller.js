@@ -15,14 +15,14 @@ async function registerUserController(req, res) {
     });
   }
   const isUserExists = await userModel.findOne({
-    $or: [{ usernmae }, { email }],
+    $or: [{ username }, { email }],
   });
   if (isUserExists) {
     res.status(400).json({
       message: "user with this email or username already exists",
     });
   }
-  const hash = await bcrypt.hash("password", 10);
+  const hash = await bcrypt.hash(password, 10);
 
   const user = await userModel.create({
     username,
@@ -54,7 +54,8 @@ async function registerUserController(req, res) {
  * @access Public
  */
 async function loginUserController(req, res) {
-  const { email, password } = req.body;
+
+  const { email, password } = req.body; 
   if (!email || !password) {
     return res.status(400).json({
       message: "Email and password is required to login",
