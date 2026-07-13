@@ -20,7 +20,7 @@ async function registerUserController(req, res) {
     $or: [{ username }, { email }],
   });
   if (isUserExists) {
-    res.status(400).json({
+    return res.status(400).json({
       message: "user with this email or username already exists",
     });
   }
