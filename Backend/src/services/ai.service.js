@@ -97,18 +97,37 @@ async function generateInterviewReport({
   selfDescription,
   jobDescription,
 }) {
-  const prompt = `Generate an interview report for a candidate with the following details:
-                        Resume: ${resume}
-                        Self Description: ${selfDescription}
-                        Job Description: ${jobDescription}
-`;
+  const prompt = `You are an expert interview coach. Analyze the candidate's resume, self-description, and the job description provided below. Generate a structured interview preparation report with the following:
+
+1. **matchScore**: A number between 0 and 100 indicating how well the candidate matches the job.
+2. **technicalQuestions**: An array of technical questions that could be asked, each with the question text, the interviewer's intention behind it, and a detailed answer guide.
+3. **behavioralQuestions**: An array of behavioral questions that could be asked, each with the question text, the interviewer's intention behind it, and a detailed answer guide.
+4. **skillGaps**: An array of skills the candidate is lacking, each with the skill name and severity ("low", "medium", or "high").
+5. **preparationPlan**: A day-wise preparation plan, each entry with a day number, focus area, and list of tasks.
+6. **title**: The job title for which this report is generated.
+
+Candidate Resume:
+${resume}
+
+Candidate Self Description:
+${selfDescription}
+
+Job Description:
+${jobDescription}
+
+Respond ONLY with the JSON matching the required schema. Do not include any extra fields.`;
+
+  // Clean the schema — remove properties Gemini API doesn't support
+  const jsonSchema = zodToJsonSchema(interviewReportSchema);
+  delete jsonSchema.$schema;
+  delete jsonSchema.additionalProperties;
 
   const response = await ai.models.generateContent({
-    model: "gemini-3.1-flash-lite",
+    model: "gemini-3-flash-preview",
     contents: prompt,
     config: {
       responseMimeType: "application/json",
-      responseSchema: zodToJsonSchema(interviewReportSchema),
+      responseSchema: jsonSchema,
     },
   });
 
