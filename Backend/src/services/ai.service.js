@@ -115,4 +115,4 @@ async function generateInterviewReport({
   return JSON.parse(response.text);
 }
 
-module.exports = invokeGeminiApi;
+module.exports = generateInterviewReport;
