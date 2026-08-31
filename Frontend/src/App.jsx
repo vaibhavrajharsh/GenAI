@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router";
 import Login from "./Features/Auth/pages/Login";
 import Register from "./Features/Auth/pages/Register";
 import Protected from "./Features/Auth/components/Protected";
+import Home from "./Features/Interview/Home";
 
 const App = () => {
   return (
@@ -10,7 +11,7 @@ const App = () => {
         path="/"
         element={
           <Protected>
-            <h1 className="text-4xl text-white">Home Page</h1>
+            <Home />
           </Protected>
         }
       />
