@@ -22,14 +22,15 @@ interviewRouter.post(
  * @access private
  */
 interviewRouter.get(
-  "report/:interviewId",
+  "/report/:interviewId",
   authMiddleware.authUser,
   interviewController.getInterviewReportByIdController,
 );
 
 /**
- *@description: Get all interview reports.
- *@access: private
+ * @route GET /api/interview/
+ * @description Get all interview reports.
+ * @access private
  */
 interviewRouter.get(
   "/",

@@ -1,14 +1,16 @@
 import { useState, useRef } from "react";
+import { useNavigate } from "react-router";
 import { useAuth } from "../Auth/hooks/useAuth";
 import { generateReport } from "./services/interview.api";
-import ReportView from "./pages/ReportView";
 
 const Home = () => {
   const { user, handleLogout } = useAuth();
+  const navigate = useNavigate();
   const [selfDescription, setSelfDescription] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [resumeFile, setResumeFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  // report state kept only for potential inline usage
   const [report, setReport] = useState(null);
   const [error, setError] = useState("");
   const [isDragging, setIsDragging] = useState(false);
@@ -61,12 +63,14 @@ const Home = () => {
     setError("");
 
     try {
-      const data = await generateReport({
+      const response = await generateReport({
         resume: resumeFile,
         selfDescription,
         jobDescription,
       });
-      setReport(data.data);
+      const reportData = response.data.data;
+      setReport(reportData);
+      navigate(`/reports/${reportData._id}`);
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong. Please try again.");
     } finally {
@@ -82,9 +86,7 @@ const Home = () => {
     setError("");
   };
 
-  if (report) {
-    return <ReportView report={report} onBack={handleReset} user={user} onLogout={handleLogout} />;
-  }
+  // Report is now viewed on its own route, no inline rendering needed
 
   return (
     <div className="min-h-screen bg-[#171717] text-white overflow-auto">
@@ -107,7 +109,13 @@ const Home = () => {
           </span>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate("/reports")}
+            className="px-4 py-2 text-sm font-medium rounded-xl border border-white/10 text-gray-300 hover:bg-white/5 hover:text-white transition-all duration-200"
+          >
+            My Reports
+          </button>
           <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
             <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-xs font-bold text-gray-900">
               {user?.username?.charAt(0).toUpperCase()}

@@ -5,14 +5,19 @@ const api = axios.create({
   withCredentials: true,
 });
 
-export async function generateReport({ resume, selfDescription, jobDescription }) {
+export const generateReport = ({jobDescription, selfDescription, resume})=>{
   const formData = new FormData();
-  formData.append("resume", resume);
-  formData.append("selfDescription", selfDescription);
   formData.append("jobDescription", jobDescription);
+  formData.append("selfDescription", selfDescription);
+  formData.append("resume", resume);
 
-  const response = await api.post("/api/interview", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-  return response.data;
+  return api.post("/api/interview", formData);
+}
+
+export const getAllReports = () => {
+  return api.get("/api/interview");
+}
+
+export const getReportById = (interviewId) => {
+  return api.get(`/api/interview/report/${interviewId}`);
 }
